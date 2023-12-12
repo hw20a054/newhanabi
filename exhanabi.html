@@ -1,0 +1,975 @@
+<html>
+
+<head>
+    <title>three.js + ar.js</title>
+    <meta name="viewport" content="width=device-width, viewport-fit=cover, shrink-to-fit=no" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <canvas></canvas>
+    </div>
+    <!--❶ three.jsとAR.jsを読み込む-->
+    <script src="https://unpkg.com/three@0.127.0/build/three.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/3.3.3/three.js/build/ar.js"></script>
+    <script async>
+        const renderer = new THREE.WebGLRenderer({
+            canvas: document.querySelector('canvas'),
+            antialias: true,
+            alpha: true
+        });
+        const camera = new THREE.PerspectiveCamera();
+        const scene = new THREE.Scene();
+        const markerRoot = new THREE.Group();
+        const arToolkitContext = new THREEx.ArToolkitContext({
+            cameraParametersUrl: './camera.dat', // ❷ camera.datを読み込む
+            detectionMode: 'mono'
+        });
+        const arToolkitSource = new THREEx.ArToolkitSource({
+            sourceType: 'webcam'
+        });
+        const arMarkerControl = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
+            type: 'pattern',
+            patternUrl: 'pattern-majical_hanabinotama01.patt' // ❸ pattern.pattを読み込む
+        });
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+
+        window.addEventListener('resize', handleResize, {
+            passive: true
+        });
+
+        arToolkitContext.init(() => {
+            camera.projectionMatrix.copy(arToolkitContext.getProjectionMatrix());
+        });
+
+        arToolkitSource.init(() => {
+            document.querySelector('.wrapper').appendChild(arToolkitSource.domElement); // ❹ videoタグを.wrapper配下に移動させる
+            setTimeout(handleResize, 400); // ❺ リサイズイベントを一度発火させる
+        });
+
+        scene.add(markerRoot);
+
+        const directionalLight = new THREE.DirectionalLight(0xFFFFFF);
+        directionalLight.position.set(1, 0, 1);
+        scene.add(directionalLight);
+
+        let flg = false;
+        let mauseflg = false;
+
+        let mflg1 = false;
+        let mflg2 = false;
+
+        let max = 0;
+
+        const sphere_geometry = new THREE.SphereGeometry(0.1, 64, 32);
+        const sphere_material = new THREE.MeshBasicMaterial({ color: 0x00008b, transparent: true, opacity: 1.0 });
+        const sphere = new THREE.Mesh(sphere_geometry, sphere_material);
+        sphere.position.set(0, -3, 4);
+        markerRoot.add(sphere);
+
+        class CustomSinCurve extends THREE.Curve {
+            constructor(scale = 1) {
+                super();
+                this.scale = scale;
+            }
+            getPoint(t, optionalTarget = new THREE.Vector3()) {
+
+                const tx = t * 0.3;
+                const ty = 0;
+                const tz = Math.sin(Math.PI * t) * 0.03;
+
+                return optionalTarget.set(tx, ty, tz).multiplyScalar(this.scale);
+            }
+        }
+        function createhanabi(c) {
+            const path = new CustomSinCurve(4);
+            const geometry = new THREE.TubeGeometry(path, 100, 0.025, 36, false);
+            const material = new THREE.MeshBasicMaterial({ color: c });
+            material.opacity = 0;
+            material.transparent = true;
+            const mesh = new THREE.Mesh(geometry, material);
+            return mesh;
+        }
+
+        class CustomSinCurve1 extends THREE.Curve {
+            constructor(scale = 1) {
+                super();
+                this.scale = scale;
+            }
+            getPoint(t, optionalTarget = new THREE.Vector3()) {
+
+                const tx = t * 0.15;
+                const ty = 0;
+                const tz = Math.sin(Math.PI * t) * 0.015;
+
+                return optionalTarget.set(tx, ty, tz).multiplyScalar(this.scale);
+            }
+        }
+        function createhanabi50(c) {
+            const path = new CustomSinCurve1(4);
+            const geometry = new THREE.TubeGeometry(path, 100, 0.025, 36, false);
+            const material = new THREE.MeshBasicMaterial({ color: c });
+            material.opacity = 0;
+            material.transparent = true;
+            const mesh = new THREE.Mesh(geometry, material);
+            return mesh;
+        }
+
+        class CustomSinCurve2 extends THREE.Curve {
+            constructor(scale = 1) {
+                super();
+                this.scale = scale;
+            }
+            getPoint(t, optionalTarget = new THREE.Vector3()) {
+
+                const tx = t * 0.24;
+                const ty = 0;
+                const tz = Math.sin(Math.PI * t) * 0.015;
+
+                return optionalTarget.set(tx, ty, tz).multiplyScalar(this.scale);
+            }
+        }
+        function createhanabi802(c) {
+            const path = new CustomSinCurve2(4);
+            const geometry = new THREE.TubeGeometry(path, 100, 0.025, 36, false);
+            const material = new THREE.MeshBasicMaterial({ color: c });
+            material.opacity = 0;
+            material.transparent = true;
+            const mesh = new THREE.Mesh(geometry, material);
+            return mesh;
+        }
+
+        class CustomSinCurve3 extends THREE.Curve {
+            constructor(scale = 1) {
+                super();
+                this.scale = scale;
+            }
+            getPoint(t, optionalTarget = new THREE.Vector3()) {
+
+                const tx = t * 0.15;
+                const ty = 0;
+                const tz = Math.sin(Math.PI * t) * 0.01;
+
+                return optionalTarget.set(tx, ty, tz).multiplyScalar(this.scale);
+            }
+        }
+        function createhanabi502(c) {
+            const path = new CustomSinCurve3(4);
+            const geometry = new THREE.TubeGeometry(path, 100, 0.025, 36, false);
+            const material = new THREE.MeshBasicMaterial({ color: c });
+            material.opacity = 0;
+            material.transparent = true;
+            const mesh = new THREE.Mesh(geometry, material);
+            return mesh;
+        }
+
+        class CustomSinCurve4 extends THREE.Curve {
+            constructor(scale = 1) {
+                super();
+                this.scale = scale;
+            }
+            getPoint(t, optionalTarget = new THREE.Vector3()) {
+
+                const tx = t * 0.18;
+                const ty = 0;
+                const tz = Math.sin(Math.PI * t) * 0.015;
+
+                return optionalTarget.set(tx, ty, tz).multiplyScalar(this.scale);
+            }
+        }
+        function createhanabi602(c) {
+            const path = new CustomSinCurve4(4);
+            const geometry = new THREE.TubeGeometry(path, 100, 0.025, 36, false);
+            const material = new THREE.MeshBasicMaterial({ color: c });
+            material.opacity = 0;
+            material.transparent = true;
+            const mesh = new THREE.Mesh(geometry, material);
+            return mesh;
+        }
+
+        class CustomSinCurve5 extends THREE.Curve {
+            constructor(scale = 1) {
+                super();
+                this.scale = scale;
+            }
+            getPoint(t, optionalTarget = new THREE.Vector3()) {
+
+                const tx = t * 0.06;
+                const ty = 0;
+                const tz = Math.sin(Math.PI * t) * 0.005;
+
+                return optionalTarget.set(tx, ty, tz).multiplyScalar(this.scale);
+            }
+        }
+        function createhanabi202(c) {
+            const path = new CustomSinCurve5(4);
+            const geometry = new THREE.TubeGeometry(path, 100, 0.025, 36, false);
+            const material = new THREE.MeshBasicMaterial({ color: c });
+            material.opacity = 0;
+            material.transparent = true;
+            const mesh = new THREE.Mesh(geometry, material);
+            return mesh;
+        }
+
+        class CustomSinCurve6 extends THREE.Curve {
+            constructor(scale = 1) {
+                super();
+                this.scale = scale;
+            }
+            getPoint(t, optionalTarget = new THREE.Vector3()) {
+
+                const tx = t * 0.24;
+                const ty = 0;
+                const tz = Math.sin(Math.PI * t) * 0.02;
+
+                return optionalTarget.set(tx, ty, tz).multiplyScalar(this.scale);
+            }
+        }
+        function createhanabi80(c) {
+            const path = new CustomSinCurve6(4);
+            const geometry = new THREE.TubeGeometry(path, 100, 0.025, 36, false);
+            const material = new THREE.MeshBasicMaterial({ color: c });
+            material.opacity = 0;
+            material.transparent = true;
+            const mesh = new THREE.Mesh(geometry, material);
+            return mesh;
+        }
+
+        class CustomSinCurve7 extends THREE.Curve {
+            constructor(scale = 1) {
+                super();
+                this.scale = scale;
+            }
+            getPoint(t, optionalTarget = new THREE.Vector3()) {
+
+                const tx = t * 0.24;
+                const ty = 0;
+                const tz = Math.sin(Math.PI * t) * 0;
+
+                return optionalTarget.set(tx, ty, tz).multiplyScalar(this.scale);
+            }
+        }
+        function createhanabi804(c) {
+            const path = new CustomSinCurve7(4);
+            const geometry = new THREE.TubeGeometry(path, 100, 0.025, 36, false);
+            const material = new THREE.MeshBasicMaterial({ color: c });
+            material.opacity = 0;
+            material.transparent = true;
+            const mesh = new THREE.Mesh(geometry, material);
+            return mesh;
+        }
+
+        class CustomSinCurve8 extends THREE.Curve {
+            constructor(scale = 1) {
+                super();
+                this.scale = scale;
+            }
+            getPoint(t, optionalTarget = new THREE.Vector3()) {
+
+                const tx = t * 0.15;
+                const ty = 0;
+                const tz = Math.sin(Math.PI * t) * 0;
+
+                return optionalTarget.set(tx, ty, tz).multiplyScalar(this.scale);
+            }
+        }
+        function createhanabi504(c) {
+            const path = new CustomSinCurve8(4);
+            const geometry = new THREE.TubeGeometry(path, 100, 0.025, 36, false);
+            const material = new THREE.MeshBasicMaterial({ color: c });
+            material.opacity = 0;
+            material.transparent = true;
+            const mesh = new THREE.Mesh(geometry, material);
+            return mesh;
+        }
+
+        class CustomSinCurve9 extends THREE.Curve {
+            constructor(scale = 1) {
+                super();
+                this.scale = scale;
+            }
+            getPoint(t, optionalTarget = new THREE.Vector3()) {
+
+                const tx = t * 0.06;
+                const ty = 0;
+                const tz = Math.sin(Math.PI * t) * 0.001;
+
+                return optionalTarget.set(tx, ty, tz).multiplyScalar(this.scale);
+            }
+        }
+        function createhanabi204(c) {
+            const path = new CustomSinCurve9(4);
+            const geometry = new THREE.TubeGeometry(path, 100, 0.025, 36, false);
+            const material = new THREE.MeshBasicMaterial({ color: c });
+            material.opacity = 0;
+            material.transparent = true;
+            const mesh = new THREE.Mesh(geometry, material);
+            return mesh;
+        }
+
+        class CustomSinCurve10 extends THREE.Curve {
+            constructor(scale = 1) {
+                super();
+                this.scale = scale;
+            }
+            getPoint(t, optionalTarget = new THREE.Vector3()) {
+
+                const tx = t * 0.12;
+                const ty = 0;
+                const tz = Math.sin(Math.PI * t) * 0.01;
+
+                return optionalTarget.set(tx, ty, tz).multiplyScalar(this.scale);
+            }
+        }
+        function createhanabi404(c) {
+            const path = new CustomSinCurve10(4);
+            const geometry = new THREE.TubeGeometry(path, 100, 0.025, 36, false);
+            const material = new THREE.MeshBasicMaterial({ color: c });
+            material.opacity = 0;
+            material.transparent = true;
+            const mesh = new THREE.Mesh(geometry, material);
+            return mesh;
+        }
+
+        class CustomSinCurve11 extends THREE.Curve {
+            constructor(scale = 1) {
+                super();
+                this.scale = scale;
+            }
+            getPoint(t, optionalTarget = new THREE.Vector3()) {
+
+                const tx = t * 0.18;
+                const ty = 0;
+                const tz = Math.sin(Math.PI * t) * 0.005;
+
+                return optionalTarget.set(tx, ty, tz).multiplyScalar(this.scale);
+            }
+        }
+        function createhanabi604(c) {
+            const path = new CustomSinCurve11(4);
+            const geometry = new THREE.TubeGeometry(path, 100, 0.025, 36, false);
+            const material = new THREE.MeshBasicMaterial({ color: c });
+            material.opacity = 0;
+            material.transparent = true;
+            const mesh = new THREE.Mesh(geometry, material);
+            return mesh;
+        }
+
+
+        var simplecolorcode = [0x0000ff, 0xffff00, 0xff1493];
+        var redcolorcode = [0xdc143c, 0xff4500, 0xffff00];
+        var pinkcolorcode = [0xc71585, 0xff69b4, 0xffff00];
+        var bluecolorcode = [0x191970, 0x6495ed, 0x87cefa];
+        var greencolorcode = [0x006400, 0x228b22, 0xadff2f];
+        var color1 = 0x0000ff;
+        var color2 = 0xffff00;
+        var color3 = 0xff1493;
+
+        function createHANABI() {
+            const group = new THREE.Group();
+            const hanabi1 = createhanabi(color1);
+            hanabi1.rotation.y = Math.PI / 180 * 180;
+            const hanabi2 = createhanabi50(color2);
+            hanabi2.rotation.y = Math.PI / 180 * 160
+            const hanabi3 = createhanabi(color1);
+            hanabi3.rotation.y = Math.PI / 180 * 150
+            const hanabi4 = createhanabi802(color3);
+            hanabi4.rotation.y = Math.PI / 180 * 130
+            const hanabi5 = createhanabi502(color2);
+            hanabi5.rotation.y = Math.PI / 180 * 105
+            const hanabi6 = createhanabi602(color2);
+            hanabi6.rotation.z = Math.PI / 180 * 180;
+            hanabi6.rotation.y -= Math.PI / 180 * 110;
+            const hanabi7 = createhanabi502(color1);
+            hanabi7.rotation.z = Math.PI / 180 * 180;
+            hanabi7.rotation.y -= Math.PI / 180 * 130;
+            const hanabi8 = createhanabi(color2);
+            hanabi8.rotation.z = Math.PI / 180 * 180;
+            hanabi8.rotation.y -= Math.PI / 180 * 160;
+            const hanabi9 = createhanabi202(color1);
+            hanabi9.rotation.z = Math.PI / 180 * 180;
+            hanabi9.rotation.y -= Math.PI / 180 * 170;
+            const hanabi10 = createhanabi80(color3);
+            hanabi10.rotation.z = Math.PI / 180 * 180;
+            hanabi10.rotation.y -= Math.PI / 180 * 205;
+            const hanabi11 = createhanabi502(color2);
+            hanabi11.rotation.z = Math.PI / 180 * 180;
+            hanabi11.rotation.y -= Math.PI / 180 * 220;
+            const hanabi12 = createhanabi602(color2);
+            hanabi12.rotation.z = Math.PI / 180 * 180;
+            hanabi12.rotation.y -= Math.PI / 180 * 240;
+            const hanabi13 = createhanabi804(color3);
+            hanabi13.rotation.z = Math.PI / 180 * 180;
+            hanabi13.rotation.y -= Math.PI / 180 * 260;
+            const hanabi14 = createhanabi504(color1);
+            hanabi14.rotation.z = Math.PI / 180 * 180;
+            hanabi14.rotation.y -= Math.PI / 180 * 280;
+            const hanabi15 = createhanabi202(color2);
+            hanabi15.rotation.y = Math.PI / 180 * 200;
+            const hanabi16 = createhanabi(color2);
+            hanabi16.rotation.y = Math.PI / 180 * 230;
+            const hanabi17 = createhanabi504(color3);
+            hanabi17.rotation.y = Math.PI / 180 * 250;
+            const hanabi18 = createhanabi50(color3);
+            hanabi18.rotation.y = Math.PI / 180 * 170;
+            hanabi18.position.set(-0.4, 0, -0.3);
+            const hanabi19 = createhanabi204(color1);
+            hanabi19.rotation.y = Math.PI / 180 * 120;
+            hanabi19.position.set(-0.1, 0, -0.3);
+            const hanabi20 = createhanabi504(color3);
+            hanabi20.rotation.y = Math.PI / 180 * 90;
+            hanabi20.position.set(0, 0, -0.2);
+            const hanabi21 = createhanabi404(color3);
+            hanabi21.rotation.z = Math.PI / 180 * 180;
+            hanabi21.rotation.y -= Math.PI / 180 * 135;
+            hanabi21.position.set(0.1, 0, -0.3);
+            const hanabi22 = createhanabi404(color3);
+            hanabi22.rotation.z = Math.PI / 180 * 180;
+            hanabi22.rotation.y -= Math.PI / 180 * 155;
+            hanabi22.position.set(0.2, 0, -0.2);
+            const hanabi23 = createhanabi602(color3);
+            hanabi23.rotation.z = Math.PI / 180 * 180;
+            hanabi23.rotation.y -= Math.PI / 180 * 170;
+            hanabi23.position.set(0.2, 0, -0.1);
+            const hanabi24 = createhanabi502(color2);
+            hanabi24.rotation.z = Math.PI / 180 * 180;
+            hanabi24.rotation.y -= Math.PI / 180 * 180;
+            hanabi24.position.set(0.35, 0, -0.1);
+            const hanabi25 = createhanabi502(color1);
+            hanabi25.rotation.z = Math.PI / 180 * 180;
+            hanabi25.rotation.y -= Math.PI / 180 * 190;
+            hanabi25.position.set(0.3, 0, 0);
+            const hanabi26 = createhanabi502(color1);
+            hanabi26.rotation.z = Math.PI / 180 * 180;
+            hanabi26.rotation.y -= Math.PI / 180 * 240;
+            hanabi26.position.set(0.4, 0, 0.2);
+            const hanabi27 = createhanabi204(color3);
+            hanabi27.rotation.z = Math.PI / 180 * 180;
+            hanabi27.rotation.y -= Math.PI / 180 * 250;
+            hanabi27.position.set(0.4, 0, 0.5);
+            const hanabi28 = createhanabi604(color1);
+            hanabi28.rotation.z = Math.PI / 180 * 180;
+            hanabi28.rotation.y -= Math.PI / 180 * 260;
+            hanabi28.position.set(0.15, 0, 0.3);
+            const hanabi29 = createhanabi502(color3);
+            hanabi29.rotation.y = Math.PI / 180 * 190;
+            hanabi29.position.set(-0.2, 0, 0);
+            const hanabi30 = createhanabi604(color1);
+            hanabi30.rotation.y = Math.PI / 180 * 210;
+            hanabi30.position.set(-0.24, 0, 0.05);
+            const hanabi31 = createhanabi502(color3);
+            hanabi31.rotation.y = Math.PI / 180 * 230;
+            hanabi31.position.set(-0.5, 0, 0.3);
+            const hanabi32 = createhanabi404(color1);
+            hanabi32.rotation.y = Math.PI / 180 * 225;
+            hanabi32.position.set(-0.1, 0, 0.15);
+            const hanabi33 = createhanabi404(color1);
+            hanabi33.rotation.y = Math.PI / 180 * 245;
+            hanabi33.position.set(-0.35, 0, 0.5);
+            const hanabi34 = createhanabi502(color2);
+            hanabi34.rotation.y = Math.PI / 180 * 250;
+            hanabi34.position.set(-0.25, 0, 0.45);
+            const hanabi35 = createhanabi604(color2);
+            hanabi35.rotation.y = Math.PI / 180 * 260;
+            hanabi35.position.set(-0.15, 0, 0.55);
+            const hanabi36 = createhanabi804(color2);
+            hanabi36.rotation.y = Math.PI / 180 * 270;
+            hanabi36.position.set(0, 0, 0.4);
+            const hanabi37 = createhanabi604(color3);
+            hanabi37.rotation.y = Math.PI / 180 * 265;
+            hanabi37.position.set(-0.05, 0, 0.65);
+            const hanabi38 = createhanabi502(color2);
+            hanabi38.rotation.y = Math.PI / 180 * 140;
+            hanabi38.position.set(-0.3, 0, -0.6);
+            const hanabi39 = createhanabi404(color3);
+            hanabi39.rotation.y = Math.PI / 180 * 130;
+            hanabi39.position.set(-0.2, 0, -0.6);
+            const hanabi40 = createhanabi802(color1);
+            hanabi40.rotation.y = Math.PI / 180 * 120;
+            hanabi40.position.set(-0.08, 0, -0.6);
+            const hanabi41 = createhanabi502(color2);
+            hanabi41.rotation.y = Math.PI / 180 * 115;
+            hanabi41.position.set(-0.06, 0, -0.85);
+            const hanabi42 = createhanabi502(color1);
+            hanabi42.rotation.z = Math.PI / 180 * 180;
+            hanabi42.rotation.y -= Math.PI / 180 * 110;
+            hanabi42.position.set(0.02, 0, -0.95);
+            const hanabi43 = createhanabi802(color2);
+            hanabi43.rotation.z = Math.PI / 180 * 180;
+            hanabi43.rotation.y -= Math.PI / 180 * 115;
+            hanabi43.position.set(0.05, 0, -0.6);
+            const hanabi44 = createhanabi802(color3);
+            hanabi44.rotation.z = Math.PI / 180 * 180;
+            hanabi44.rotation.y -= Math.PI / 180 * 125;
+            hanabi44.position.set(0.15, 0, -0.7);
+            const hanabi45 = createhanabi802(color1);
+            hanabi45.rotation.z = Math.PI / 180 * 180;
+            hanabi45.rotation.y -= Math.PI / 180 * 140;
+            hanabi45.position.set(0.25, 0, -0.6);
+            const hanabi46 = createhanabi604(color2);
+            hanabi46.rotation.z = Math.PI / 180 * 180;
+            hanabi46.rotation.y -= Math.PI / 180 * 130;
+            hanabi46.position.set(0.3, 0, -0.8);
+            const hanabi47 = createhanabi802(color2);
+            hanabi47.rotation.z = Math.PI / 180 * 180;
+            hanabi47.rotation.y -= Math.PI / 180 * 150;
+            hanabi47.position.set(0.5, 0, -0.7);
+            const hanabi48 = createhanabi602(color3);
+            hanabi48.rotation.z = Math.PI / 180 * 180;
+            hanabi48.rotation.y -= Math.PI / 180 * 155;
+            hanabi48.position.set(0.5, 0, -0.5);
+            const hanabi49 = createhanabi404(color1);
+            hanabi49.rotation.z = Math.PI / 180 * 180;
+            hanabi49.rotation.y -= Math.PI / 180 * 165;
+            hanabi49.position.set(0.7, 0, -0.5);
+            group.add(hanabi1);
+            group.add(hanabi2);
+            group.add(hanabi3);
+            group.add(hanabi4);
+            group.add(hanabi5);
+            group.add(hanabi6);
+            group.add(hanabi7);
+            group.add(hanabi8);
+            group.add(hanabi9);
+            group.add(hanabi10);
+            group.add(hanabi11);
+            group.add(hanabi12);
+            group.add(hanabi13);
+            group.add(hanabi14);
+            group.add(hanabi15);
+            group.add(hanabi16);
+            group.add(hanabi17);
+            group.add(hanabi18);
+            group.add(hanabi19);
+            group.add(hanabi20);
+            group.add(hanabi21);
+            group.add(hanabi22);
+            group.add(hanabi23);
+            group.add(hanabi24);
+            group.add(hanabi25);
+            group.add(hanabi26);
+            group.add(hanabi27);
+            group.add(hanabi28);
+            group.add(hanabi29);
+            group.add(hanabi30);
+            group.add(hanabi31);
+            group.add(hanabi32);
+            group.add(hanabi33);
+            group.add(hanabi34);
+            group.add(hanabi35);
+            group.add(hanabi36);
+            group.add(hanabi37);
+            group.add(hanabi38);
+            group.add(hanabi39);
+            group.add(hanabi40);
+            group.add(hanabi41);
+            group.add(hanabi42);
+            group.add(hanabi43);
+            group.add(hanabi44);
+            group.add(hanabi45);
+            group.add(hanabi46);
+            group.add(hanabi47);
+            group.add(hanabi48);
+            group.add(hanabi49);
+            hanabi1.position.y += 0.2;
+            hanabi2.position.y += 0.2;
+            hanabi3.position.y += 0.2;
+            hanabi4.position.y += 0.2;
+            hanabi5.position.y += 0.2;
+            hanabi6.position.y += 0.2;
+            hanabi7.position.y += 0.2;
+            hanabi8.position.y += 0.2;
+            hanabi9.position.y += 0.2;
+            hanabi10.position.y += 0.2;
+            hanabi11.position.y += 0.2;
+            hanabi12.position.y += 0.2;
+            hanabi13.position.y += 0.2;
+            hanabi14.position.y += 0.2;
+            hanabi15.position.y += 0.2;
+            hanabi16.position.y += 0.2;
+            hanabi17.position.y += 0.2;
+            hanabi18.position.y += 0.2;
+            hanabi19.position.y += 0.2;
+            hanabi20.position.y += 0.2;
+            hanabi21.position.y += 0.2;
+            hanabi22.position.y += 0.2;
+            hanabi23.position.y += 0.2;
+            hanabi24.position.y += 0.2;
+            hanabi25.position.y += 0.2;
+            hanabi26.position.y += 0.2;
+            hanabi27.position.y += 0.2;
+            hanabi28.position.y += 0.2;
+            hanabi29.position.y += 0.2;
+            hanabi30.position.y += 0.2;
+            hanabi31.position.y += 0.2;
+            hanabi32.position.y += 0.2;
+            hanabi33.position.y += 0.2;
+            hanabi34.position.y += 0.2;
+            hanabi35.position.y += 0.2;
+            hanabi36.position.y += 0.2;
+            hanabi37.position.y += 0.2;
+            hanabi38.position.y += 0.2;
+            hanabi39.position.y += 0.2;
+            hanabi40.position.y += 0.2;
+            hanabi41.position.y += 0.2;
+            hanabi42.position.y += 0.2;
+            hanabi43.position.y += 0.2;
+            hanabi44.position.y += 0.2;
+            hanabi45.position.y += 0.2;
+            hanabi46.position.y += 0.2;
+            hanabi47.position.y += 0.2;
+            hanabi48.position.y += 0.2;
+            hanabi49.position.y += 0.2;
+            return group;
+        }
+
+        const HANABI = createHANABI();
+        markerRoot.add(HANABI);
+        const children = HANABI.children;
+        console.log(children);
+        const hanabi1 = children[0];
+        const hanabi2 = children[1];
+        const hanabi3 = children[2];
+        const hanabi4 = children[3];
+        const hanabi5 = children[4];
+        const hanabi6 = children[5];
+        const hanabi7 = children[6];
+        const hanabi8 = children[7];
+        const hanabi9 = children[8];
+        const hanabi10 = children[9];
+        const hanabi11 = children[10];
+        const hanabi12 = children[11];
+        const hanabi13 = children[12];
+        const hanabi14 = children[13];
+        const hanabi15 = children[14];
+        const hanabi16 = children[15];
+        const hanabi17 = children[16];
+        const hanabi18 = children[17];
+        const hanabi19 = children[18];
+        const hanabi20 = children[19];
+        const hanabi21 = children[20];
+        const hanabi22 = children[21];
+        const hanabi23 = children[22];
+        const hanabi24 = children[23];
+        const hanabi25 = children[24];
+        const hanabi26 = children[25];
+        const hanabi27 = children[26];
+        const hanabi28 = children[27];
+        const hanabi29 = children[28];
+        const hanabi30 = children[29];
+        const hanabi31 = children[30];
+        const hanabi32 = children[31];
+        const hanabi33 = children[32];
+        const hanabi34 = children[33];
+        const hanabi35 = children[34];
+        const hanabi36 = children[35];
+        const hanabi37 = children[36];
+        const hanabi38 = children[37];
+        const hanabi39 = children[38];
+        const hanabi40 = children[39];
+        const hanabi41 = children[40];
+        const hanabi42 = children[41];
+        const hanabi43 = children[42];
+        const hanabi44 = children[43];
+        const hanabi45 = children[44];
+        const hanabi46 = children[45];
+        const hanabi47 = children[46];
+        const hanabi48 = children[47];
+        const hanabi49 = children[48];
+
+        const listener = new THREE.AudioListener();
+        camera.add(listener);
+        const AudioLoader = new THREE.AudioLoader();
+        const hanabiSound = new THREE.Audio(listener);
+        AudioLoader.load('./hanabbakuhatu.mp3', function (buffer) {
+            hanabiSound.setBuffer(buffer);
+            hanabiSound.setLoop(false);
+            hanabiSound.setVolume(1);
+
+        });
+
+        const hanabiloopSound = new THREE.Audio(listener);
+        AudioLoader.load('./hanabiloop4.mp3', function (buffer) {
+            hanabiloopSound.setBuffer(buffer);
+            hanabiloopSound.setLoop(false);
+            hanabiloopSound.setVolume(0.2);
+
+        });
+
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if (mauseflg == true) {
+                if (sphere.position.z - max >= 2) {
+                    sphere.position.z -= 0.1;
+
+                }
+                if (sphere.position.z - max < 2 && sphere.position.z - max >= 1) {
+                    sphere.position.z -= 0.01 * 2;
+                    sphere_material.opacity -= 0.001;
+                    hanabiloopSound.play();
+                }
+                if (sphere.position.z - max < 1 && sphere.position.z - max >= 0.5) {
+                    sphere.position.z -= 0.005 * 2;
+                    sphere_material.opacity -= 0.001;
+
+                }
+                if (sphere.position.z - max < 0.5 && sphere.position.z - max >= 0.025) {
+                    sphere.position.z -= 0.0025 * 2;
+                    sphere_material.opacity -= 0.01;
+
+                }
+                if (sphere.position.z - max < 0.025 && sphere.position.z - max > 0) {
+                    sphere.position.z -= 0.00125 * 2;
+                    sphere_material.opacity -= 0.01;
+
+                }
+                if (sphere.position.z - max <= 0 && flg == false) {
+                    hanabiSound.play()
+                    hanabi1.material.opacity += 0.01;
+                    hanabi2.material.opacity += 0.01;
+                    hanabi3.material.opacity += 0.01;
+                    hanabi4.material.opacity += 0.01;
+                    hanabi5.material.opacity += 0.01;
+                    hanabi6.material.opacity += 0.01;
+                    hanabi7.material.opacity += 0.01;
+                    hanabi8.material.opacity += 0.01;
+                    hanabi9.material.opacity += 0.01;
+                    hanabi10.material.opacity += 0.01;
+                    hanabi11.material.opacity += 0.01;
+                    hanabi12.material.opacity += 0.01
+                    hanabi13.material.opacity += 0.01;
+                    hanabi14.material.opacity += 0.01;
+                    hanabi15.material.opacity += 0.01;
+                    hanabi16.material.opacity += 0.01;
+                    hanabi17.material.opacity += 0.01;
+                    hanabi18.material.opacity += 0.01;
+                    hanabi19.material.opacity += 0.01;
+                    hanabi20.material.opacity += 0.01;
+                    hanabi21.material.opacity += 0.01;
+                    hanabi22.material.opacity += 0.01;
+                    hanabi23.material.opacity += 0.01;
+                    hanabi24.material.opacity += 0.01;
+                    hanabi25.material.opacity += 0.01;
+                    hanabi26.material.opacity += 0.01;
+                    hanabi27.material.opacity += 0.01;
+                    hanabi28.material.opacity += 0.01;
+                    hanabi29.material.opacity += 0.01;
+                    hanabi30.material.opacity += 0.01;
+                    hanabi31.material.opacity += 0.01;
+                    hanabi32.material.opacity += 0.01;
+                    hanabi33.material.opacity += 0.01;
+                    hanabi34.material.opacity += 0.01;
+                    hanabi35.material.opacity += 0.01;
+                    hanabi36.material.opacity += 0.01;
+                    hanabi37.material.opacity += 0.01;
+                    hanabi38.material.opacity += 0.01;
+                    hanabi39.material.opacity += 0.01;
+                    hanabi40.material.opacity += 0.01;
+                    hanabi41.material.opacity += 0.01;
+                    hanabi42.material.opacity += 0.01;
+                    hanabi43.material.opacity += 0.01;
+                    hanabi44.material.opacity += 0.01;
+                    hanabi45.material.opacity += 0.01;
+                    hanabi46.material.opacity += 0.01;
+                    hanabi47.material.opacity += 0.01;
+                    hanabi48.material.opacity += 0.01;
+                    hanabi49.material.opacity += 0.01;
+                    if (hanabi1.material.opacity >= 1) {
+                        flg = true;
+                    }
+
+                }
+                if (flg == true && hanabi1.material.opacity > 0) {
+                    hanabi1.material.opacity -= 0.01;
+                    hanabi2.material.opacity -= 0.01;
+                    hanabi3.material.opacity -= 0.01;
+                    hanabi4.material.opacity -= 0.01;
+                    hanabi5.material.opacity -= 0.01;
+                    hanabi6.material.opacity -= 0.01;
+                    hanabi7.material.opacity -= 0.01;
+                    hanabi8.material.opacity -= 0.01;
+                    hanabi9.material.opacity -= 0.01;
+                    hanabi10.material.opacity -= 0.01;
+                    hanabi11.material.opacity -= 0.01;
+                    hanabi12.material.opacity -= 0.01
+                    hanabi13.material.opacity -= 0.01;
+                    hanabi14.material.opacity -= 0.01;
+                    hanabi15.material.opacity -= 0.01;
+                    hanabi16.material.opacity -= 0.01;
+                    hanabi17.material.opacity -= 0.01;
+                    hanabi18.material.opacity -= 0.01;
+                    hanabi19.material.opacity -= 0.01;
+                    hanabi20.material.opacity -= 0.01;
+                    hanabi21.material.opacity -= 0.01;
+                    hanabi22.material.opacity -= 0.01;
+                    hanabi23.material.opacity -= 0.01;
+                    hanabi24.material.opacity -= 0.01;
+                    hanabi25.material.opacity -= 0.01;
+                    hanabi26.material.opacity -= 0.01;
+                    hanabi27.material.opacity -= 0.01;
+                    hanabi28.material.opacity -= 0.01;
+                    hanabi29.material.opacity -= 0.01;
+                    hanabi30.material.opacity -= 0.01;
+                    hanabi31.material.opacity -= 0.01;
+                    hanabi32.material.opacity -= 0.01;
+                    hanabi33.material.opacity -= 0.01;
+                    hanabi34.material.opacity -= 0.01;
+                    hanabi35.material.opacity -= 0.01;
+                    hanabi36.material.opacity -= 0.01;
+                    hanabi37.material.opacity -= 0.01;
+                    hanabi38.material.opacity -= 0.01;
+                    hanabi39.material.opacity -= 0.01;
+                    hanabi40.material.opacity -= 0.01;
+                    hanabi41.material.opacity -= 0.01;
+                    hanabi42.material.opacity -= 0.01;
+                    hanabi43.material.opacity -= 0.01;
+                    hanabi44.material.opacity -= 0.01;
+                    hanabi45.material.opacity -= 0.01;
+                    hanabi46.material.opacity -= 0.01;
+                    hanabi47.material.opacity -= 0.01;
+                    hanabi48.material.opacity -= 0.01;
+                    hanabi49.material.opacity -= 0.01;
+                    if (hanabi1.material.opacity <= 0) {
+                        mauseflg = false;
+                        flg = false;
+                        mflg1 = false;
+                        mflg2 = false;
+                    }
+
+                }
+
+            }
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener("mousedown", function (ret) {
+            let mouseX = ret.clientX;                           // マウスのx座標
+            let mouseY = ret.clientY;                           // マウスのy座標
+            mouseX = (mouseX / window.innerWidth) * 4 - 2;    // -2 ～ +2 に正規化されたx座標
+            mouseY = -(mouseY / window.innerHeight) * 6 + 3;    // -2 ～ +2 に正規化されたy座標
+            let pos = new THREE.Vector3(mouseX, mouseY, 1);     // マウスベクトル
+            let x = pos.getComponent(0);
+            let y = pos.getComponent(2);
+            let z = -1 * pos.getComponent(1);
+            max = z;
+            console.log(x, y, z);
+            if (mauseflg == false) {
+                sphere.position.set(x, 1, 4);
+                HANABI.position.set(x, 0, z);
+                mauseflg = true;
+                sphere_material.opacity = 1;
+                var colornamber = Math.floor(Math.random() * 100);
+                console.log(colornamber);
+                if (colornamber % 5 == 0) {
+                    color1 = simplecolorcode[0];
+                    color2 = simplecolorcode[1];
+                    color3 = simplecolorcode[2];
+                }
+                if (colornamber % 5 == 1) {
+                    color1 = redcolorcode[0];
+                    color2 = redcolorcode[1];
+                    color3 = redcolorcode[2];
+                }
+                if (colornamber % 5 == 2) {
+                    color1 = pinkcolorcode[0];
+                    color2 = pinkcolorcode[1];
+                    color3 = pinkcolorcode[2];
+                }
+                if (colornamber % 5 == 3) {
+                    color1 = bluecolorcode[0];
+                    color2 = bluecolorcode[1];
+                    color3 = bluecolorcode[2];
+                }
+                if (colornamber % 5 == 4) {
+                    color1 = greencolorcode[0];
+                    color2 = greencolorcode[1];
+                    color3 = greencolorcode[2];
+                }
+                hanabi1.material.color = new THREE.Color(color1);
+                hanabi2.material.color = new THREE.Color(color2);
+                hanabi3.material.color = new THREE.Color(color1);
+                hanabi4.material.color = new THREE.Color(color3);
+                hanabi5.material.color = new THREE.Color(color2);
+                hanabi6.material.color = new THREE.Color(color2);
+                hanabi7.material.color = new THREE.Color(color1);
+                hanabi8.material.color = new THREE.Color(color2);
+                hanabi9.material.color = new THREE.Color(color1);
+                hanabi10.material.color = new THREE.Color(color3);
+                hanabi11.material.color = new THREE.Color(color2);
+                hanabi12.material.color = new THREE.Color(color2);
+                hanabi13.material.color = new THREE.Color(color3);
+                hanabi14.material.color = new THREE.Color(color1);
+                hanabi15.material.color = new THREE.Color(color2);
+                hanabi16.material.color = new THREE.Color(color2);
+                hanabi17.material.color = new THREE.Color(color3);
+                hanabi18.material.color = new THREE.Color(color3);
+                hanabi19.material.color = new THREE.Color(color1);
+                hanabi20.material.color = new THREE.Color(color3);
+                hanabi21.material.color = new THREE.Color(color3);
+                hanabi22.material.color = new THREE.Color(color3);
+                hanabi23.material.color = new THREE.Color(color3);
+                hanabi24.material.color = new THREE.Color(color2);
+                hanabi25.material.color = new THREE.Color(color1);
+                hanabi26.material.color = new THREE.Color(color1);
+                hanabi27.material.color = new THREE.Color(color3);
+                hanabi28.material.color = new THREE.Color(color1);
+                hanabi29.material.color = new THREE.Color(color3);
+                hanabi30.material.color = new THREE.Color(color1);
+                hanabi31.material.color = new THREE.Color(color3);
+                hanabi32.material.color = new THREE.Color(color1);
+                hanabi33.material.color = new THREE.Color(color1);
+                hanabi34.material.color = new THREE.Color(color2);
+                hanabi35.material.color = new THREE.Color(color2);
+                hanabi36.material.color = new THREE.Color(color2);
+                hanabi37.material.color = new THREE.Color(color3);
+                hanabi38.material.color = new THREE.Color(color2);
+                hanabi39.material.color = new THREE.Color(color3);
+                hanabi40.material.color = new THREE.Color(color1);
+                hanabi41.material.color = new THREE.Color(color2);
+                hanabi42.material.color = new THREE.Color(color1);
+                hanabi43.material.color = new THREE.Color(color2);
+                hanabi44.material.color = new THREE.Color(color3);
+                hanabi45.material.color = new THREE.Color(color1);
+                hanabi46.material.color = new THREE.Color(color2);
+                hanabi47.material.color = new THREE.Color(color2);
+                hanabi48.material.color = new THREE.Color(color3);
+                hanabi49.material.color = new THREE.Color(color1);
+                //hanabi1.material.color.set(0x000000);
+                renderer.render(scene, camera);
+            }
+        });
+
+        renderer.setAnimationLoop((delta) => {
+            if (arToolkitSource.ready) {
+                arToolkitContext.update(arToolkitSource.domElement);
+            }
+
+            renderer.render(scene, camera);
+        });
+
+        function handleResize() {
+            if (arToolkitSource.ready) {
+                arToolkitSource.onResize();
+                arToolkitSource.copySizeTo(renderer.domElement);
+            }
+
+            renderer.setPixelRatio(window.devicePixelRatio);
+        }
+    </script>
+</body>
+
+</html>
